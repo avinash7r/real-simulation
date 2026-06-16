@@ -11,13 +11,17 @@ jobs:
     steps:
       - name: Deploy to staging server
         uses: appleboy/ssh-action@v1
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          envs: DATABASE_URL
           script: |
             set -e
             cd /home/ec2-user/app
             git pull origin main
             docker compose -f Docker-Compose.yml down
+            DATABASE_URL=$DATABASE_URL 
             docker compose -f Docker-Compose.yml up -d --build
