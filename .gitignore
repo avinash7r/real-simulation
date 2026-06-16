@@ -1,0 +1,4 @@
+/infra
+*/node_modules
+*/dist
+*/.env
