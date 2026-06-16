@@ -1,0 +1,23 @@
+name: deploy-app-load-test-ec2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            cd /home/ec2-user/app
+            git pull origin main
+            docker compose -f Docker-Compose.yml down
+            docker compose -f Docker-Compose.yml up -d --build
